@@ -29,7 +29,7 @@ app.get("/api/haberler/findbyurl/:url", async (req, res) => {
   res.json(data);
 });
 app.get("/api/haberler/firstfiveposts", async (req, res) => {
-  const data = await News.find({}).limit(5);
+  const data = await News.find({}).sort({ id: -1 }).limit(5);
   res.json(data);
 });
 app.get("/api/haberler/pagination/:id", async (req, res) => {
