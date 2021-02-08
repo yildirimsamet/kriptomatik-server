@@ -15,7 +15,9 @@ mongoose.connect(
     console.log("db baglandı");
   }
 );
-
+app.get("/", (req, res) => {
+  res.send("Hello");
+});
 app.get("/api/haberler/count", async (req, res) => {
   const count = await News.find({}).countDocuments();
 
