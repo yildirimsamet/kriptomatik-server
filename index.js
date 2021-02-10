@@ -6,6 +6,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 require("dotenv").config();
 app.use(cors());
+app.use(express.json());
 
 mongoose.connect(
   process.env.DB_URI,
@@ -43,6 +44,32 @@ app.get("/api/haberler/urls", async (req, res) => {
   const data = await News.find({}, { url: 1 });
 
   res.json(data);
+});
+app.post("/api/admin/addpost", async (req, res) => {
+  const { title, url, content, category, image, source } = req.body;
+  if (!title || !url || !content || !category || !image || !source) {
+    res.json({ success: false });
+  } else {
+    const item = await News.find({}).sort({ id: -1 }).limit(1);
+    const newPost = await News.create({
+      id: item[0].id + 1,
+      title,
+      url,
+      content,
+      category,
+      image,
+      source,
+    });
+    res.json({ success: true, data: newPost });
+  }
+});
+app.post("/api/admin", (req, res) => {
+  const { password, email } = req.body;
+  if (password == process.env.ADMIN_PASS && email == process.env.ADMIN_EMAIL) {
+    return res.json({ success: true });
+  } else {
+    return res.json({ success: false });
+  }
 });
 
 app.listen(PORT, (err) => {
