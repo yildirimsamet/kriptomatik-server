@@ -27,7 +27,11 @@ app.get("/api/haberler/count", async (req, res) => {
 app.get("/api/haberler/findbyurl/:url", async (req, res) => {
   const data = await News.find({ url: req.params.url });
 
-  res.json(data);
+  if (data) {
+    return res.json(data);
+  } else {
+    return res.json({ data: { title: "Error" } });
+  }
 });
 app.get("/api/haberler/firstfiveposts", async (req, res) => {
   const data = await News.find({}).sort({ id: -1 }).limit(5);
@@ -71,7 +75,13 @@ app.post("/api/admin", (req, res) => {
     return res.json({ success: false });
   }
 });
-
+app.post("/api/findbyurlNupdatevisited", async (req, res) => {
+  const { url } = req.body;
+  const data = await News.findOne({ url });
+  data.visitedCount = data.visitedCount + 1;
+  const success = await data.save();
+  res.send(success);
+});
 app.listen(PORT, (err) => {
   if (err) throw err;
   console.log(`Server running on port ${PORT}`);
