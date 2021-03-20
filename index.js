@@ -4,13 +4,14 @@ const cors = require("cors");
 const haberler = require("./routers/haberler");
 const admin = require("./routers/admin");
 const dbConnect = require("./utils/dbConnect");
-// const mongoose = require("mongoose");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+
 dbConnect();
+
 app.get("/", (req, res) => {
   res.send("Hello");
 });
@@ -18,74 +19,18 @@ app.get("/", (req, res) => {
 app.use("/api/haberler", haberler);
 
 app.use("/api/admin", admin);
-// app.get("/api/haberler/count", async (req, res) => {
-//   const count = await News.find({}).countDocuments();
 
-//   res.json({ count });
-// });
-// app.get("/api/haberler/findbyurl/:url", async (req, res) => {
-//   const data = await News.find({ url: req.params.url });
-
-//   if (data) {
-//     return res.json(data);
-//   } else {
-//     return res.json({ data: { title: "Error" } });
-//   }
-// });
-// app.get("/api/haberler/firstfiveposts", async (req, res) => {
-//   const data = await News.find({}).sort({ id: -1 }).limit(5);
-//   res.json(data);
-// });
-// app.get("/api/haberler/pagination/:id", async (req, res) => {
-//   const data = await News.find({})
-//     .sort({ id: -1 })
-//     .skip(parseInt(req.params.id))
-//     .limit(10);
-//   res.json(data);
-// });
-// app.get("/api/haberler/urls", async (req, res) => {
-//   const data = await News.find({}, { url: 1 });
-
-//   res.json(data);
-// });
-// app.post("/api/admin/addpost", async (req, res) => {
-//   const { title, url, content, category, image, source } = req.body;
-//   if (!title || !url || !content || !category || !image || !source) {
-//     res.json({ success: false });
-//   } else {
-//     const item = await News.find({}).sort({ id: -1 }).limit(1);
-//     const newPost = await News.create({
-//       id: item[0].id + 1,
-//       title,
-//       url,
-//       content,
-//       category,
-//       image,
-//       source,
-//     });
-//     res.json({ success: true, data: newPost });
-//   }
-// });
-// app.post("/api/admin", (req, res) => {
-//   const { password, email } = req.body;
-//   if (password == process.env.ADMIN_PASS && email == process.env.ADMIN_EMAIL) {
-//     return res.json({ success: true });
-//   } else {
-//     return res.json({ success: false });
-//   }
-// });
-
-// app.post("/api/findbyurlNupdatevisited", async (req, res) => {
-//   const { url } = req.body;
-//   const data = await News.findOne({ url });
-//   if (data.visitedCount) {
-//     data.visitedCount = data.visitedCount + 1;
-//   } else {
-//     data.visitedCount = 1;
-//   }
-//   const success = await data.save();
-//   res.send(success);
-// });
+app.post("/api/findbyurlNupdatevisited", async (req, res) => {
+  const { url } = req.body;
+  const data = await News.findOne({ url });
+  if (data.visitedCount) {
+    data.visitedCount = data.visitedCount + 1;
+  } else {
+    data.visitedCount = 1;
+  }
+  const success = await data.save();
+  res.send(success);
+});
 app.listen(PORT, (err) => {
   if (err) throw err;
   console.log(`Server running on port ${PORT}`);
